@@ -25,7 +25,7 @@
 #include <stdint.h>
 
 /**
- *
+ * Boot info tags.
  */
 enum multiboot2_info_tag {
 	MULTIBOOT2_INFO_TAG_END                 = 0,
