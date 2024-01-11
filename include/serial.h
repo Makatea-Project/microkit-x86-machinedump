@@ -34,8 +34,13 @@ static inline void serial_puts(const char *s)
 	}
 }
 
-/** Initialise the serial port. */
+/**
+ * Initialise the serial port.
+ */
 extern void serial_init(void);
 
-/** Print a number in decimal format on the serial port. */
-extern void serial_put_uint64(uint64_t num);
+/**
+ * Writes a string to the serial port using a very basic format string-like
+ * syntax.
+ */
+extern void serial_printf(const char *fmt, ...);

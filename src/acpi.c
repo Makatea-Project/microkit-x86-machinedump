@@ -22,11 +22,9 @@ static bool parse_madt_ioapic(struct acpi_madt_ioapic *ioapic)
 		return true;
 	}
 	sysinfo.ioapic.addr[sysinfo.ioapic.count++] = ioapic->address;
-
-	serial_puts("[*] I/O APIC #");
-	serial_put_uint64(sysinfo.ioapic.count);
-	serial_puts(" found\n");
-
+	serial_printf("[*] I/O APIC #%d found at %x\n",
+	              (uint64_t) sysinfo.ioapic.count,
+	              (uint64_t) ioapic->address);
 	return true;
 }
 
@@ -39,6 +37,7 @@ static bool parse_madt(struct acpi_madt *madt)
 
 	/* Save the base address of the APIC. */
 	sysinfo.apic.addr = madt->apic_base;
+	serial_printf("[*] APIC found at %x\n", sysinfo.apic.addr);
 
 	/* Walk the list of entries. */
 	struct acpi_madt_header *header = (void *) (madt + 1);
@@ -67,10 +66,9 @@ static bool parse_dmar_drhd(struct acpi_dmar_drhd *drhd)
 		return false;
 	}
 	sysinfo.drhu.addr[sysinfo.drhu.count++] = drhd->reg_base[0];
-
-	serial_puts("[*] DRHU #");
-	serial_put_uint64(sysinfo.drhu.count);
-	serial_puts(" found\n");
+	serial_printf("[*] DRHU #%d found at %x\n",
+	              (uint64_t) sysinfo.drhu.count,
+	              (uint64_t) drhd->reg_base[0]);
 
 	return true;
 }

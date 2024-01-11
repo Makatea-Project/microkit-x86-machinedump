@@ -24,87 +24,67 @@ struct sysinfo sysinfo;
  */
 static void dump_machine_file(void)
 {
-	serial_puts("\n-----BEGIN MACHINE FILE BLOCK-----\n");
-	serial_puts("{\n");
+	/* Opening tag. */
+	serial_printf("\n"
+	              "-----BEGIN MACHINE FILE BLOCK-----\n"
+	              "{\n");
 
 	/* Memory regions. */
-	serial_puts("    \"memory\": [\n");
+	serial_printf("    \"memory\": [\n");
 	for (int i = 0; i < sysinfo.memory.count; i++) {
-		serial_puts("        {\n");
-		serial_puts("            \"base\": ");
-		serial_put_uint64(sysinfo.memory.list[i].addr);
-		serial_puts(",\n");
-		serial_puts("            \"size\": ");
-		serial_put_uint64(sysinfo.memory.list[i].size);
-		serial_puts("\n");
-		if (i + 1 == sysinfo.memory.count)
-			serial_puts("        }\n");
-		else
-			serial_puts("        },\n");
+		serial_printf("        {\n");
+		serial_printf("            \"base\": %d,\n", sysinfo.memory.list[i].addr);
+		serial_printf("            \"size\": %d\n",  sysinfo.memory.list[i].size);
+		serial_printf("        }%s\n", i + 1 == sysinfo.memory.count ? "" : ",");
 	}
-	serial_puts("    ],\n");
+	serial_printf("    ],\n");
 
 	/* Kernel devices. */
-	serial_puts("    \"kdevs\": [\n");
-	serial_puts("        {\n");
-	serial_puts("            \"name\": \"apic\",\n");
-	serial_puts("            \"base\": ");
-	serial_put_uint64(sysinfo.apic.addr);
-	serial_puts(",\n");
-	serial_puts("            \"size\": 4096\n");
-	serial_puts("        }");
+	serial_printf("    \"kdevs\": [\n");
+	serial_printf("        {\n");
+	serial_printf("            \"name\": \"apic\",\n");
+	serial_printf("            \"base\": %d,\n", sysinfo.apic.addr);
+	serial_printf("            \"size\": 4096\n");
+	serial_printf("        }");
 	for (int i = 0; i < sysinfo.ioapic.count; i++) {
-		serial_puts(",\n        {\n");
-		serial_puts("            \"name\": \"ioapic.");
-		serial_put_uint64(i);
-		serial_puts("\",\n");
-		serial_puts("            \"base\": ");
-		serial_put_uint64(sysinfo.ioapic.addr[i]);
-		serial_puts(",\n            \"size\": 4096\n");
-		serial_puts("        }");
+		serial_printf(",\n"
+		              "        {\n");
+		serial_printf("            \"name\": \"ioapic.%d\",\n", (uint64_t) i);
+		serial_printf("            \"base\": %d,\n", sysinfo.ioapic.addr[i]);
+		serial_printf("            \"size\": 4096\n");
+		serial_printf("        }");
 	}
 	for (int i = 0; i < sysinfo.drhu.count; i++) {
-		serial_puts(",\n        {\n");
-		serial_puts("            \"name\": \"drhu.");
-		serial_put_uint64(i);
-		serial_puts("\",\n");
-		serial_puts("            \"base\": ");
-		serial_put_uint64(sysinfo.drhu.addr[i]);
-		serial_puts(",\n            \"size\": 4096\n");
-		serial_puts("        }");
+		serial_printf(",\n"
+		              "        {\n");
+		serial_printf("            \"name\": \"drhu.%d\",\n", (uint64_t) i);
+		serial_printf("            \"base\": %d,\n", sysinfo.drhu.addr[i]);
+		serial_printf("            \"size\": 4096\n");
+		serial_printf("        }");
 	}
-	serial_puts("\n    ],\n");
+	serial_printf("\n    ],\n");
 
 	/* RMRRs. */
-	serial_puts("    \"rmrrs\": [\n");
+	serial_printf("    \"rmrrs\": [\n");
 	if (sysinfo.rmrr.count > 0) {
 		for (int i = 0; i < sysinfo.rmrr.count; i++) {
-			serial_puts("        {\n");
-			serial_puts("            \"devid\": ");
-			serial_put_uint64(sysinfo.rmrr.list[i].devid);
-			serial_puts(",\n");
-			serial_puts("            \"base\":  ");
-			serial_put_uint64(sysinfo.rmrr.list[i].addr);
-			serial_puts(",\n");
-			serial_puts("            \"limit\": ");
-			serial_put_uint64(sysinfo.rmrr.list[i].limit);
-			serial_puts("\n");
-			if (i + 1 == sysinfo.rmrr.count)
-				serial_puts("        }\n");
-			else
-				serial_puts("        },\n");
+			serial_printf("        {\n");
+			serial_printf("            \"devid\": %d,\n", sysinfo.rmrr.list[i].devid);
+			serial_printf("            \"base\":  %d,\n", sysinfo.rmrr.list[i].addr);
+			serial_printf("            \"limit\": %d\n",  sysinfo.rmrr.list[i].limit);
+			serial_printf("        }%s\n", i + 1 == sysinfo.rmrr.count ? "" : ",");
 		}
 	}
-	serial_puts("    ],\n");
+	serial_printf("    ],\n");
 
 	/* Bootinfo. */
-	serial_puts("    \"bootinfo\": {\n");
-	serial_puts("        \"numIOPTLevels\": ");
-	serial_put_uint64(sysinfo.vtd.num_iopt_levels);
-	serial_puts("\n    }\n");
+	serial_printf("    \"bootinfo\": {\n");
+	serial_printf("        \"numIOPTLevels\": %d\n", sysinfo.vtd.num_iopt_levels);
+	serial_printf("    }\n");
 
-	serial_puts("}\n");
-	serial_puts("-----END MACHINE FILE BLOCK-----\n");
+	/* Closing tag. */
+	serial_printf("}\n");
+	serial_printf("-----END MACHINE FILE BLOCK-----\n");
 }
 
 /*
