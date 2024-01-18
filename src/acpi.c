@@ -18,11 +18,11 @@ static bool parse_madt_ioapic(struct acpi_madt_ioapic *ioapic)
 {
 	/* Populate the sysinfo structure. */
 	if (sysinfo.ioapic.count == MAX_NUM_IOAPICS) {
-		serial_puts("[!] Warning: too many IOAPICs, ignoring.\n");
+		serial_puts("[!] Warning: too many IOAPICs, ignoring.\r\n");
 		return true;
 	}
 	sysinfo.ioapic.addr[sysinfo.ioapic.count++] = ioapic->address;
-	serial_printf("[*] I/O APIC #%d found at %x\n",
+	serial_printf("[*] I/O APIC #%d found at %x\r\n",
 	              (uint64_t) sysinfo.ioapic.count,
 	              (uint64_t) ioapic->address);
 	return true;
@@ -33,11 +33,11 @@ static bool parse_madt_ioapic(struct acpi_madt_ioapic *ioapic)
  */
 static bool parse_madt(struct acpi_madt *madt)
 {
-	serial_puts("[*] ACPI MADT table found\n");
+	serial_puts("[*] ACPI MADT table found\r\n");
 
 	/* Save the base address of the APIC. */
 	sysinfo.apic.addr = madt->apic_base;
-	serial_printf("[*] APIC found at %x\n", sysinfo.apic.addr);
+	serial_printf("[*] APIC found at %x\r\n", sysinfo.apic.addr);
 
 	/* Walk the list of entries. */
 	struct acpi_madt_header *header = (void *) (madt + 1);
@@ -62,11 +62,11 @@ static bool parse_dmar_drhd(struct acpi_dmar_drhd *drhd)
 {
 	/* Populate the sysinfo structure. */
 	if (sysinfo.drhu.count == MAX_NUM_DRHUS) {
-		serial_puts("[X] Error: too many DRHUs, please raise the limit\n");
+		serial_puts("[X] Error: too many DRHUs, please raise the limit\r\n");
 		return false;
 	}
 	sysinfo.drhu.addr[sysinfo.drhu.count++] = drhd->reg_base[0];
-	serial_printf("[*] DRHU #%d found at %x\n",
+	serial_printf("[*] DRHU #%d found at %x\r\n",
 	              (uint64_t) sysinfo.drhu.count,
 	              (uint64_t) drhd->reg_base[0]);
 
@@ -78,11 +78,11 @@ static bool parse_dmar_drhd(struct acpi_dmar_drhd *drhd)
  */
 static bool parse_dmar_rmrr(struct acpi_dmar_rmrr *rmrr)
 {
-	serial_puts("[*] ACPI: DMAR: RMRR table found\n");
+	serial_puts("[*] ACPI: DMAR: RMRR table found\r\n");
 
 	/* Validate the entry. */
 	if (rmrr->reg_base[1] != 0 || rmrr->reg_limit[1] != 0) {
-		serial_puts("[!] Warning: ACPI: RMRR device above 4GiB, disabling IOMMU support\n");
+		serial_puts("[!] Warning: ACPI: RMRR device above 4GiB, disabling IOMMU support\r\n");
 		sysinfo.drhu.count = 0;
 		sysinfo.rmrr.count = 0;
 		return true;
@@ -95,7 +95,7 @@ static bool parse_dmar_rmrr(struct acpi_dmar_rmrr *rmrr)
 
 		/* Check the device scope type. */
 		if (devscope->type != ACPI_DMAR_SCOPE_TYPE_ENDPOINT) {
-			serial_puts("[!] Warning: ACPI: RMRR device scope: type not supported, disabling IOMMU support\n");
+			serial_puts("[!] Warning: ACPI: RMRR device scope: type not supported, disabling IOMMU support\r\n");
 			sysinfo.drhu.count = 0;
 			sysinfo.rmrr.count = 0;
 			return true;
@@ -103,7 +103,7 @@ static bool parse_dmar_rmrr(struct acpi_dmar_rmrr *rmrr)
 
 		/* Check the device scope size. */
 		if (devscope->length != sizeof (*devscope)) {
-			serial_puts("[!] Warning: ACPI: RMRR device scope: bridges not supported, disabling IOMMU support\n");
+			serial_puts("[!] Warning: ACPI: RMRR device scope: bridges not supported, disabling IOMMU support\r\n");
 			sysinfo.drhu.count = 0;
 			sysinfo.rmrr.count = 0;
 			return true;
@@ -111,7 +111,7 @@ static bool parse_dmar_rmrr(struct acpi_dmar_rmrr *rmrr)
 
 		/* Populate the sysinfo structure. */
 		if (sysinfo.rmrr.count == MAX_NUM_RMRRS) {
-			serial_puts("[X] Error: too many RMRRs, please raise the limit\n");
+			serial_puts("[X] Error: too many RMRRs, please raise the limit\r\n");
 			return false;
 		}
 		sysinfo.rmrr.list[sysinfo.rmrr.count].addr  = rmrr->reg_base[0];
@@ -131,7 +131,7 @@ static bool parse_dmar_rmrr(struct acpi_dmar_rmrr *rmrr)
  */
 static bool parse_dmar(struct acpi_dmar *dmar)
 {
-	serial_puts("[*] ACPI DMAR table found\n");
+	serial_puts("[*] ACPI DMAR table found\r\n");
 
 	/* Walk the list of entries. */
 	struct acpi_dmar_header *header = (void *) (dmar + 1);
@@ -184,11 +184,11 @@ bool acpi_parse_tables(void)
 
 	/* Make sure that the tables were found. */
 	if (!madt_found) {
-		serial_puts("[X] Error: ACPI MADT table not found!\n");
+		serial_puts("[X] Error: ACPI MADT table not found!\r\n");
 		return false;
 	}
 	if (!dmar_found) {
-		serial_puts("[X] Error: ACPI DMAR table not found!\n");
+		serial_puts("[X] Error: ACPI DMAR table not found!\r\n");
 		return false;
 	}
 	return true;

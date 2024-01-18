@@ -54,7 +54,7 @@ bool vtd_scan(void)
 	else if (aw_bitmask & VTD_SAGAW_2_LEVEL)
 		sysinfo.vtd.num_iopt_levels = 2;
 	else {
-		serial_puts("[X] Error: IOMMU: mismatch of supported number of PT levels between IOMMUs\n");
+		serial_puts("[X] Error: IOMMU: mismatch of supported number of PT levels between IOMMUs\r\n");
 		return false;
 	}
 

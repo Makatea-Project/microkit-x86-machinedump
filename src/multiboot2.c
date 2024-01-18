@@ -120,7 +120,7 @@ static bool parse_command_line(struct multiboot2_tag_header *tag_header)
 
 	/* Force 0-termination. */
 	cmdline[size - 1] = '\0';
-	serial_printf("[*] Multiboot2 command line: %s\n", cmdline);
+	serial_printf("[*] Multiboot2 command line: %s\r\n", cmdline);
 
 	/* Parse all tokens. */
 	char *token;
@@ -133,12 +133,12 @@ static bool parse_command_line(struct multiboot2_tag_header *tag_header)
 			uint64_t val = 0;
 
 			if (value && strtou64(value, &val) && val < 0x3ff) {
-				serial_printf("[*] Switching to serial port %x\n", val);
+				serial_printf("[*] Switching to serial port %x\r\n", val);
 				options.serial_port = (uint16_t) val;
 				serial_init();
 				continue;
 			} else {
-				serial_printf("[X] Cannot parse serial port option\n");
+				serial_printf("[X] Cannot parse serial port option\r\n");
 				return false;
 			}
 		}
@@ -159,13 +159,13 @@ static bool parse_command_line(struct multiboot2_tag_header *tag_header)
 					continue;
 				}
 			} else {
-				serial_printf("[X] Cannot parse on_exit option\n");
+				serial_printf("[X] Cannot parse on_exit option\r\n");
 				return false;
 			}
 		}
 
 		/* Unknown option. */
-		serial_printf("[X] Invalid command line option: %s\n", key);
+		serial_printf("[X] Invalid command line option: %s\r\n", key);
 		return false;
 	}
 
@@ -181,7 +181,7 @@ static bool parse_mmap_tag(struct multiboot2_tag_header *tag_header)
 	uint32_t saddr = (uint32_t) (tag + 1);
 	uint32_t eaddr = (uint32_t) tag + tag_header->size;
 
-	serial_puts("[*] Multiboot2 memory map tag found\n");
+	serial_puts("[*] Multiboot2 memory map tag found\r\n");
 
 	/* Walk the list of memory map entries. */
 	for (uint32_t addr = saddr; addr < eaddr; addr += tag->entry_size) {
@@ -191,11 +191,11 @@ static bool parse_mmap_tag(struct multiboot2_tag_header *tag_header)
 		if (m->type != MULTIBOOT2_MMAP_TYPE_USEABLE || m->addr < HIGHMEM_ADDR)
 			continue;
 
-		serial_printf("[*] Found a usable memory area at %x size %x\n", m->addr, m->size);
+		serial_printf("[*] Found a usable memory area at %x size %x\r\n", m->addr, m->size);
 
 		/* Populate the sysinfo structure. */
 		if (sysinfo.memory.count == MAX_MEMORY_REGIONS) {
-			serial_puts("[X] Error: too many memory regions provided by boot loader!\n");
+			serial_puts("[X] Error: too many memory regions provided by boot loader!\r\n");
 			return false;
 		}
 		sysinfo.memory.list[sysinfo.memory.count].addr = m->addr;
@@ -213,7 +213,7 @@ static bool parse_rsdp1_tag(struct multiboot2_tag_header *tag_header)
 {
 	struct multiboot2_tag_rsdp1 *tag = (void *) (tag_header + 1);
 
-	serial_puts("[*] Multiboot2 ACPI 1.0 RSDP tag found\n");
+	serial_puts("[*] Multiboot2 ACPI 1.0 RSDP tag found\r\n");
 	sysinfo.rsdt.addr = tag->rsdt_address;
 	return true;
 }
@@ -225,7 +225,7 @@ static bool parse_rsdp2_tag(struct multiboot2_tag_header *tag_header)
 {
 	struct multiboot2_tag_rsdp2 *tag = (struct multiboot2_tag_rsdp2 *) (tag_header + 1);
 
-	serial_puts("[*] Multiboot2 ACPI 2.0 RSDP tag found\n");
+	serial_puts("[*] Multiboot2 ACPI 2.0 RSDP tag found\r\n");
 	sysinfo.rsdt.addr = tag->rsdt_address;
 	return true;
 }
@@ -248,7 +248,7 @@ bool multiboot2_parse_info(uint32_t info_addr)
 		if (!parse_mmap_tag(tag))
 			return false;
 	} else {
-		serial_puts("[X] Error: multiboot2 memory map tag missing!\n");
+		serial_puts("[X] Error: multiboot2 memory map tag missing!\r\n");
 		return false;
 	}
 
@@ -260,7 +260,7 @@ bool multiboot2_parse_info(uint32_t info_addr)
 		if (!parse_rsdp1_tag(tag))
 			return false;
 	} else {
-		serial_puts("[X] Error: multiboot ACPI tag missing!\n");
+		serial_puts("[X] Error: multiboot ACPI tag missing!\r\n");
 		return false;
 	}
 
