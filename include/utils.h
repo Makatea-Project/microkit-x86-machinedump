@@ -52,6 +52,7 @@ static inline char strcmp(char *s1, char *s2)
 
 static inline bool strtou64(char *str, uint64_t *val)
 {
+	uint64_t num = 0;
 	int base = 10;
 
 	if (str[0] == '0' && (str[1] == 'x' || str[1] == 'X')) {
@@ -59,18 +60,18 @@ static inline bool strtou64(char *str, uint64_t *val)
 		str += 2;
 	}
 
-	while (*str) {
-		*val *= base;
+	for (; *str; str++) {
+		num *= base;
 		if (*str >= '0' && *str <= '9')
-			*val += *str - '0';
+			num += *str - '0';
 		else if (base == 16 && (*str >= 'a' && *str <= 'f'))
-			*val += *str - 'a' + 10;
+			num += *str - 'a' + 10;
 		else if (base == 16 && (*str >= 'A' && *str <= 'F'))
-			*val += *str - 'A' + 10;
+			num += *str - 'A' + 10;
 		else
 			return false;
-		str++;
 	}
+	*val = num;
 	return true;
 }
 
