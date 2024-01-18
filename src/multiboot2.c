@@ -158,10 +158,9 @@ static bool parse_command_line(struct multiboot2_tag_header *tag_header)
 					options.on_exit = OPTION_ON_EXIT_SHUTDOWN;
 					continue;
 				}
-			} else {
-				serial_printf("[X] Cannot parse on_exit option\r\n");
-				return false;
 			}
+			serial_printf("[X] Cannot parse on_exit option\r\n");
+			return false;
 		}
 
 		/* Unknown option. */
