@@ -83,7 +83,7 @@ static void dump_machine_file(void)
 
 	/* Bootinfo. */
 	serial_printf("    \"bootinfo\": {\r\n");
-	serial_printf("        \"numIOPTLevels\": %d\r\n", sysinfo.vtd.num_iopt_levels);
+	serial_printf("        \"numIOPTLevels\": %d\r\n", (uint64_t) sysinfo.vtd.num_iopt_levels);
 	serial_printf("    }\r\n");
 
 	/* Closing tag. */
